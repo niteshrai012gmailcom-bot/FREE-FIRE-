@@ -10,7 +10,7 @@ import {
 import {
   downloadBlankFormatPdfTemplate,
   exportCsvReport,
-  exportPdfReport,
+  generateSummaryPdfReport,
 } from './services/reportService.ts';
 import {
   addRecordsWithDedupe,
@@ -856,8 +856,16 @@ export class RajaPredictorScene extends xb.Script {
       );
       return;
     }
-    const fileName = exportPdfReport(this.records, this.rules, this.analytics);
-    this.setStatus(`Generated downloadable PDF report: ${fileName}`, '#34d399');
+    const {fileName} = generateSummaryPdfReport(
+      this.records,
+      this.rules,
+      this.analytics,
+      {autoDownload: true}
+    );
+    this.setStatus(
+      `Generated visual summary PDF report: ${fileName}`,
+      '#34d399'
+    );
   }
 
   private handleExportCsv(): void {
@@ -1129,7 +1137,7 @@ export class RajaPredictorScene extends xb.Script {
         this.centerSectionTitle.text = 'DOWNLOADABLE PDF & CSV REPORTS';
         this.centerBodyText.text =
           `Ready to export ${this.records.length} permanently stored record(s).\n` +
-          `• PDF Report: Includes overview metrics, Big/Small & Odd/Even statistics, streak profile, number frequency table, randomness disclaimer, and historical ledger.\n` +
+          `• Summary PDF Report: Includes KPI cards, Big/Small & Odd/Even ratio meters, a visual number frequency bar chart, frequency table with inline bars, randomness disclaimer, and historical ledger.\n` +
           `• CSV Report: Raw spreadsheet export with Date, Round, Result, Big/Small, Parity, and Source PDF columns.`;
         this.centerSecondaryText.text = RANDOMNESS_DISCLAIMER;
         this.configureActionButtons(
